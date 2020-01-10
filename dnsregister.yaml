@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dnsregister
+spec:
+  containers:
+  - name: dnsregister
+    image: riccardopomato/dnsregister
+    env:
+    - name: DnsProvider
+      valueFrom:
+        configMapKeyRef:
+          name: appconfig
+          key: DnsProvider
+    - name: subscription_id
+      valueFrom:
+        configMapKeyRef:
+          name: appconfig
+          key: subscription_id
+    - name: ResourceGroup
+      valueFrom:
+        configMapKeyRef:
+          name: appconfig
+          key: ResourceGroup
+    - name: DnsZone
+      valueFrom:
+        configMapKeyRef:
+          name: appconfig
+          key: DnsZone
+    - name: TENANT_ID
+      valueFrom:
+        configMapKeyRef:
+          name: appconfig
+          key: TENANT_ID
+    - name: CLIENT
+      valueFrom:
+        configMapKeyRef:
+          name: appconfig
+          key: CLIENT
+    - name: KEY
+      valueFrom:
+        configMapKeyRef:
+          name: appconfig
+          key: KEY
