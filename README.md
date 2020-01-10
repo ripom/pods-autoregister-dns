@@ -47,7 +47,7 @@ data:
 ```
 
 In the repository there is a test file DnsRegister.yaml useful to deploy a simple pod that automatically register its IP in the Azure DNS zone.
-Be aware, the yaml file use the configmap reference, then you should customized the configmap file with the correct ENV variable that point to your subscription and to an existing DNS zone.
+Be aware, the yaml file use the configmap reference, then you should customize the configmap file with the correct ENV variable that point to your subscription and to an existing DNS zone.
 
 ```Steps
 The steps to test the DNS record creation:
