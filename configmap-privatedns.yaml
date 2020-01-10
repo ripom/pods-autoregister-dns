@@ -1,12 +1,12 @@
-kind: ConfigMap 
-apiVersion: v1 
+kind: ConfigMap
+apiVersion: v1
 metadata:
-  name: appconfig 
+  name: appconfig
 data:
         DnsProvider: "AzurePrivateDNS"
-        subscription_id: "764ecba4-cd01-4529-9a05-6062d7931bf8"
-        ResourceGroup: "rgpazewdmlit021infrastructure"
-        DnsZone: "cassandra.dse"
-        TENANT_ID: "05d75c05-fa1a-42e7-9cf1-eb416c396f2d"
-        CLIENT: "871cf1bf-6dd1-448d-b317-669790bf5f72"
-        KEY: "3c3083ed-8f43-4702-95a3-ea1895cf72e9"
+        subscription_id: "xxxxxxxx-xxxx-xxxxx-xxxxxxxxxxxxxxxxx"
+        ResourceGroup: "resourcegroupname"
+        DnsZone: "domainname.local"
+        TENANT_ID: "xxxxxxxx-xxxx-xxxxx-xxxxxxxxxxxxxxxxx"
+        CLIENT: "xxxxxxxx-xxxx-xxxxx-xxxxxxxxxxxxxxxxx"
+        KEY: "xxxxxxxx-xxxx-xxxxx-xxxxxxxxxxxxxxxxx"
