@@ -9,7 +9,7 @@ I am planning to add more support to different cloud like Google, AWS and more.
 Please if you interested, feel free to change the code or add more cloud support using pull request.
 
 The ENV variables mandatory are:
-
+```ENV Variables
 DnsProvider: "AzureDNS"
 subscription_id: "xxxxxxxx-xxxx-xxxxx-xxxxxxxxxxxxxxxxx"
 ResourceGroup: "resourcegroupname"
@@ -25,9 +25,10 @@ DnsZone: name of the DNS zone
 TENANT_ID: is the tenant where we need to log in using the service principal
 CLIENT: is the AppId of the Service Principal
 KEY: is the Service Principal secret
-
+```
 In kubernetes deployment, is good to create a configmap and store the ENV variable like this example:
 
+```Configmap
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -40,3 +41,4 @@ data:
         TENANT_ID: "xxxxxxxx-xxxx-xxxxx-xxxxxxxxxxxxxxxxx"
         CLIENT: "xxxxxxxx-xxxx-xxxxx-xxxxxxxxxxxxxxxxx"
         KEY: "xxxxxxxx-xxxx-xxxxx-xxxxxxxxxxxxxxxxx"
+```
