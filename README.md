@@ -5,6 +5,8 @@ The container is a python script.
 When it start, it gets the POD ip and then register an A record in the DNS zone.
 ```DockerImage
 Docker Image: riccardopomato/dnsregister
+
+docker run --env DnsProvider='AzurePrivateDNS' -e subscription_id='xxxxxxxx-xxxx-xxxxx-xxxxxxxxxxxxxxxxx' -e ResourceGroup='resourcegroupname' -e DnsZone='example.local' -e TENANT_ID='xxxxxxxx-xxxx-xxxxx-xxxxxxxxxxxxxxxxx' -e CLIENT='xxxxxxxx-xxxx-xxxxx-xxxxxxxxxxxxxxxxx' -e KEY='xxxxxxxx-xxxx-xxxxx-xxxxxxxxxxxxxxxxx' riccardopomato/dnsregister 
 ```
 
 This container support only Azure Public DNS zone and Azure Private DNS Zone.
@@ -50,7 +52,7 @@ In the repository there is a test file DnsRegister.yaml useful to deploy a simpl
 Be aware, the yaml file use the configmap reference, then you should customize the configmap file with the correct ENV variable that point to your subscription and to an existing DNS zone.
 
 ```Steps
-The steps to test the DNS record creation:
+The steps to test the DNS record creation using kubernetes:
 1. Create a Service Principal
 2. Create an Azure Private DNS, for example example.local
 3. In the Access Control (IAM) of the DNS zone, assign the -Private DNS Zone Contributor- permission to the Service Principal create in the step 1
