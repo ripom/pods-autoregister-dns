@@ -2,6 +2,7 @@
 
   
 # Importing library 
+import requests, json
 import logging
 import socket 
 import time
@@ -16,6 +17,8 @@ subscription_id = environ.get('subscription_id')
 dnsProvider = environ.get('DnsProvider')
 rg = environ.get('ResourceGroup')
 dnszone = environ.get('DnsZone')
+DNSZONE_ID=environ.get('IBM_DnsZone_ID')
+INSTANCE_ID=environ.get('IBM_DnsZone_Instance_ID')
 
 # Set the logging detail level
 logging.basicConfig(level=logging.INFO)
@@ -64,6 +67,19 @@ def connect2Azure():
     except Exception as e:
         logging.error("Exception occurred during Azure connection!", exc_info=True)
     return (credentials)
+
+def connect2IBM():
+    KEY = environ.get('IBM_APIKEY')
+    data = {'grant_type':'urn:ibm:params:oauth:grant-type:apikey', 'apikey': KEY}
+    payload = json.dumps(data)
+    headers={'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json'}
+    try:
+        response = requests.post("https://iam.cloud.ibm.com/identity/token", headers=headers, data=data)
+        TOKEN=json.loads(response.text)["access_token"]
+        logging.info("Connection to IBM Cloud estabilished")
+    except Exception as e:
+        logging.error("Exception occurred during IBM Cloud connection!", exc_info=True)
+    return (TOKEN)
 
 def CreateAzureDNS_record(credentials, subscription_id, rg, dnszone, hostname, ip):
     try:
@@ -147,7 +163,9 @@ if dnsProvider=='AzureDNS':
 elif dnsProvider=='AzurePrivateDNS':
     cred=connect2Azure()
     CreateAzurePrivateDNS_record(cred, subscription_id, rg, dnszone, hostname, ip)
-
+elif dnsProvider=='IBMCloudDNS':
+    cred=connect2IBM()
+    #CreateIBMCloudDNS_record(cred, subscription_id, rg, dnszone, hostname, ip)
 
 if __name__ == '__main__':
     killer = GracefulKiller()
