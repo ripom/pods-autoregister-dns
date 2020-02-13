@@ -17,8 +17,9 @@ subscription_id = environ.get('subscription_id')
 dnsProvider = environ.get('DnsProvider')
 rg = environ.get('ResourceGroup')
 dnszone = environ.get('DnsZone')
-DNSZONE_ID=environ.get('IBM_DnsZone_ID')
-INSTANCE_ID=environ.get('IBM_DnsZone_Instance_ID')
+IBM_DNSZONE_ID=environ.get('IBM_DnsZone_ID')
+IBM_DNS_INSTANCE_ID=environ.get('IBM_DnsZone_Instance_ID')
+RECORD_ID=None
 
 # Set the logging detail level
 logging.basicConfig(level=logging.INFO)
@@ -47,6 +48,11 @@ class GracefulKiller:
             cred=connect2Azure()
             DeleteAzurePrivateDNS_record(cred, subscription_id, rg, dnszone, hostname)
             logging.info("Record DNS removed")
+        elif dnsProvider=='IBMCloudDNS':
+            logging.info("IBMCloudDNS removing record...")
+            TOKEN=connect2IBM()
+            DeleteIBMCloudDNS_record(TOKEN, IBM_DNSZONE_ID, IBM_DNS_INSTANCE_ID, RECORD_ID)
+            logging.info("Record DNS removed")
         self.kill_now = True
 
 def connect2Azure():
@@ -74,7 +80,7 @@ def connect2IBM():
     payload = json.dumps(data)
     headers={'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json'}
     try:
-        response = requests.post("https://iam.cloud.ibm.com/identity/token", headers=headers, data=data)
+        response = requests.post("https://iam.cloud.ibm.com/identity/token", headers=headers, data=data, verify=False)
         TOKEN=json.loads(response.text)["access_token"]
         logging.info("Connection to IBM Cloud estabilished")
     except Exception as e:
@@ -103,6 +109,20 @@ def CreateAzureDNS_record(credentials, subscription_id, rg, dnszone, hostname, i
         logging.info("AzureDNS record %s created", hostname)
     except Exception as e:
           logging.error("Exception occurred during AzureDNS record creation", exc_info=True)
+
+def CreateIBMCloudDNS_record(TOKEN, IBM_DNSZONE_ID, IBM_DNS_INSTANCE_ID, hostname, ip):
+    try:
+        DNSSVCS_ENDPOINT="https://api.dns-svcs.cloud.ibm.com"
+        headers={'Authorization': TOKEN}
+        data = {'name':hostname,'type':'A','rdata': {'ip':ip},'ttl':300}
+        payload = json.dumps(data)
+        uri=DNSSVCS_ENDPOINT + "/v1/instances/" + IBM_DNS_INSTANCE_ID + "/dnszones/" + IBM_DNSZONE_ID + "/resource_records"
+        response = requests.post(uri, headers=headers, data=payload, verify=False)
+        RECORD_ID=json.loads(response.text)["id"]
+        logging.info("IBMCloudDNS record %s created", hostname)
+    except Exception as e:
+        logging.error("Exception occurred during IBMCloudDNS record creation", exc_info=True)
+    return (RECORD_ID)
 
 def CreateAzurePrivateDNS_record(credentials, subscription_id, rg, dnszone, hostname, ip):
     try:
@@ -143,6 +163,16 @@ def DeleteAzureDNS_record(credentials, subscription_id, rg, dnszone, host):
     except Exception as e:
         logging.error("Exception occurred during AzurePrivateDNS record deletion", exc_info=True)
 
+def DeleteIBMCloudDNS_record(TOKEN, IBM_DNSZONE_ID, IBM_DNS_INSTANCE_ID, RECORD_ID):
+    try:
+        DNSSVCS_ENDPOINT="https://api.dns-svcs.cloud.ibm.com"
+        uri=DNSSVCS_ENDPOINT + "/v1/instances/" + IBM_DNS_INSTANCE_ID + "/dnszones/" + IBM_DNSZONE_ID + "/resource_records/" + RECORD_ID
+        headers={'Authorization': TOKEN}
+        response = requests.delete(uri, headers=headers)
+        logging.info("IBMCloudDNS record %s removed", RECORD_ID)
+    except Exception as e:
+        logging.error("Exception occurred during IBMCloudDNS record deletion", exc_info=True) 
+
 # Function to get hostname and IP address 
 def get_Host_name_IP(): 
     try: 
@@ -164,8 +194,8 @@ elif dnsProvider=='AzurePrivateDNS':
     cred=connect2Azure()
     CreateAzurePrivateDNS_record(cred, subscription_id, rg, dnszone, hostname, ip)
 elif dnsProvider=='IBMCloudDNS':
-    cred=connect2IBM()
-    #CreateIBMCloudDNS_record(cred, subscription_id, rg, dnszone, hostname, ip)
+    TOKEN=connect2IBM()
+    RECORD_ID=CreateIBMCloudDNS_record(TOKEN, IBM_DNSZONE_ID, IBM_DNS_INSTANCE_ID, hostname, ip)
 
 if __name__ == '__main__':
     killer = GracefulKiller()
