@@ -1,0 +1,9 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: appconfig
+data:
+        DnsProvider: "IBMCloudDNS"
+        IBM_DnsZone_ID: "xxxxxxxx-xxxx-xxxxx-xxxxxxxxxxxxxxxxx"
+        IBM_DnsZone_Instance_ID: "xxxxxxxx-xxxx-xxxxx-xxxxxxxxxxxxxxxxx"
+        IBM_APIKEY: "xxxxxxxx-xxxx-xxxxx-xxxxxxxxxxxxxxxxx"
