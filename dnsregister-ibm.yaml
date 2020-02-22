@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dnsregister
+spec:
+  containers:
+  - name: dnsregister
+    image: riccardopomato/dnsregister
+    env:
+    - name: DnsProvider
+      valueFrom:
+        configMapKeyRef:
+          name: appconfig
+          key: DnsProvider
+    - name: IBM_DnsZone_ID
+      valueFrom:
+        configMapKeyRef:
+          name: appconfig
+          key: IBM_DnsZone_ID
+    - name: IBM_DnsZone_Instance_ID
+      valueFrom:
+        configMapKeyRef:
+          name: appconfig
+          key: IBM_DnsZone_Instance_ID
+    - name: IBM_APIKEY
+      valueFrom:
+        configMapKeyRef:
+          name: appconfig
+          key: IBM_APIKEY

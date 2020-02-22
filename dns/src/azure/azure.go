@@ -19,7 +19,7 @@ var (
 	azure_tenant_id			= os.Getenv("TENANT_ID")	// Get TENANT_ID where the Service Principal is located
 	azure_rg			= os.Getenv("ResourceGroup")	// Get Resource Group Name where the DNS Resource is located
 	azure_resource			= "https://management.azure.com/"
-	azure_privatednszone_name	= os.Getenv("PrivateDnsZone")	// Get the DNS Resource name
+	azure_dnszone_name		= os.Getenv("DnsZone")	// Get the DNS Resource name
 	azure_privatedns_apiversion	= "2018-09-01"
 	azure_dns_apiversion		= "2018-05-01"
 	azure_privatednszonetypename	= "privateDnsZones"
@@ -96,7 +96,7 @@ func createRecord(token string, ip string, hostname string, zonetype string, api
 	}
 	payload, err := json.Marshal(message)
 	// Create the request
-	uri := azure_resource + "subscriptions/" + azure_subscription_id + "/resourceGroups/" + azure_rg + "/providers/Microsoft.Network/" + zonetype + "/" + azure_privatednszone_name + "/A/" + hostname + "?api-version=" + apiversion
+	uri := azure_resource + "subscriptions/" + azure_subscription_id + "/resourceGroups/" + azure_rg + "/providers/Microsoft.Network/" + zonetype + "/" + azure_dnszone_name + "/A/" + hostname + "?api-version=" + apiversion
 	client := http.Client{Timeout: 30 * time.Second}
 	req, err := http.NewRequest("PUT", uri,  bytes.NewBuffer(payload) )
 	// Set the Autherization header passing the token
@@ -142,7 +142,7 @@ func DeleteDnsRecord(token string, hostname string) bool {
 
 func deleteRecord(token string, hostname string, zonetype string, apiversion string) bool {
 	// Create the request
-	uri := azure_resource + "subscriptions/" + azure_subscription_id + "/resourceGroups/" + azure_rg + "/providers/Microsoft.Network/" + zonetype + "/" + azure_privatednszone_name + "/A/" + hostname + "?api-version=" + apiversion
+	uri := azure_resource + "subscriptions/" + azure_subscription_id + "/resourceGroups/" + azure_rg + "/providers/Microsoft.Network/" + zonetype + "/" + azure_dnszone_name + "/A/" + hostname + "?api-version=" + apiversion
         client := http.Client{Timeout: 30 * time.Second}
         req, err := http.NewRequest("DELETE", uri, nil)
 	// Set the Autherization header passing the token
